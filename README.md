@@ -5,7 +5,7 @@ A machine learning tool to separate earthquake and ambient noise signals for the
 ![WaveDecompNet](WaveDecompNet_structure.png)
 
  
-1. Install to "deepdenoiser" virtual envirionment
+1. Install to "WaveDecompNet" virtual envirionment
 ```bash
 conda env create -f environment.yml
 conda activate WaveDecompNet
