@@ -23,7 +23,7 @@ with h5py.File(data_dir + '/' + data_name, 'r') as f:
 
 bottleneck_name = 'LSTM'
 # %% Need to specify model_name first
-model_dataset_dir = "Model_and_datasets_1D_all_snr_40"
+model_dataset_dir = "."
 model_name = "Branch_Encoder_Decoder_" + bottleneck_name
 
 model_dir = model_dataset_dir + f'/{model_name}'

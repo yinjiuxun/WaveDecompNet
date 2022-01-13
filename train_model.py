@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader
 from wavedecompnet_models import SeismogramEncoder, SeismogramDecoder, SeisSeparator
 
 # make the output directory
-model_dataset_dir = './Model_and_datasets_1D_all_snr_40'
+model_dataset_dir = '.'
 mkdir(model_dataset_dir)
 
 model_structure = "Branch_Encoder_Decoder"
