@@ -12,7 +12,7 @@ conda activate WaveDecompNet
 ```
 
 2. make a directory called training_datasets in the current folder,
-download the prepared data from https://drive.google.com/file/d/1zzlzZr8kV3BdNhIm6q4c1rDi-4XdRNi6/view?usp=sharing 
+download the prepared data from https://www.dropbox.com/s/5frrvx9elzudemt/training_datasets_all_snr_40_unshuffled.hdf5?dl=0 
 and move it to training_datasets
 
 
