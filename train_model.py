@@ -11,7 +11,7 @@ from utilities import mkdir
 import torch
 from torch_tools import WaveformDataset, try_gpu, training_loop_branches
 from torch.utils.data import DataLoader
-from wavedecompnet_models import SeismogramEncoder, SeismogramDecoder, SeisSeparator
+from autoencoder_1D_models_torch import SeismogramEncoder, SeismogramDecoder, SeisSeparator
 
 # make the output directory
 model_dataset_dir = '.'

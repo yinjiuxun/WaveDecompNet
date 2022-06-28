@@ -7,7 +7,7 @@ from utilities import mkdir, waveform_fft
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
 from torch_tools import WaveformDataset, try_gpu, parameter_number
-from wavedecompnet_models import *
+from autoencoder_1D_models_torch import *
 from sklearn.metrics import mean_squared_error, explained_variance_score
 
 matplotlib.rcParams.update({'font.size': 10})
@@ -105,6 +105,7 @@ for ii in range(4):
              label=loss_name_list[ii])
 
 plt.legend(fontsize=12)
+plt.yscale('log')
 plt.ylabel('MSE', fontsize=14)
 plt.xlabel('Epochs', fontsize=14)
 plt.grid()
