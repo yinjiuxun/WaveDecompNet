@@ -1,3 +1,4 @@
+# %%
 import matplotlib
 from matplotlib import pyplot as plt
 import numpy as np
@@ -14,9 +15,10 @@ matplotlib.rcParams.update({'font.size': 10})
 # %% load dataset
 data_dir = './training_datasets'
 data_name = 'training_datasets_all_snr_40.hdf5'
+model_datasets = '/kuafu/yinjx/WaveDecompNet_dataset/training_datasets/training_datasets_all_snr_40_unshuffled.hdf5'
 
 # %% load dataset
-with h5py.File(data_dir + '/' + data_name, 'r') as f:
+with h5py.File(model_datasets, 'r') as f:
     time = f['time_new'][:]
     X_train = f['X_train'][:]
     Y_train = f['Y_train'][:]
@@ -46,6 +48,7 @@ test_data = WaveformDataset(X_test, Y_test)
 
 # %% load model
 model = torch.load(model_dir + '/' + f'{model_name}_Model.pth', map_location=try_gpu())
+model = model.to('cpu')
 
 batch_size = 256
 test_iter = DataLoader(test_data, batch_size=batch_size, shuffle=False)
@@ -114,7 +117,6 @@ plt.savefig(figure_dir + f"/{model_name}_Loss_evolution.pdf", bbox_inches='tight
 # obtain one batch of test images
 data_iter = iter(test_iter)
 noisy_signal, clean_signal = data_iter.next()
-noisy_signal, clean_signal = noisy_signal.to(try_gpu()), clean_signal.to(try_gpu())
 
 # get sample outputs
 denoised_signal, separated_noise = model(noisy_signal)
@@ -228,3 +230,5 @@ for i_model in range(100):
     plt.figure(1)
     plt.savefig(figure_dir + f'/{model_name}_spectrum_{i_model}.pdf',
                 bbox_inches='tight')
+
+# %%

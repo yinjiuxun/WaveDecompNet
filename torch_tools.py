@@ -113,7 +113,7 @@ def parameter_number(model):
     return num_param
 
 
-def training_loop(train_dataloader, validate_dataloader, model, loss_fn, optimizer, epochs, patience, device):
+def training_loop(train_dataloader, validate_dataloader, model, loss_fn, optimizer, scheduler, epochs, patience, device):
     # to track the training loss as the model trains
     train_losses = []
     # to track the validation loss as the model trains
@@ -124,7 +124,7 @@ def training_loop(train_dataloader, validate_dataloader, model, loss_fn, optimiz
     avg_valid_losses = []
 
     # initialize the early_stopping object
-    early_stopping = EarlyStopping(patience=patience, verbose=True)
+    early_stopping = EarlyStopping(patience=patience, verbose=True, delta=1e-6)
 
     for epoch in range(1, epochs + 1):
         # estimate time for each epoch
@@ -148,6 +148,9 @@ def training_loop(train_dataloader, validate_dataloader, model, loss_fn, optimiz
             # record training loss
             train_losses.append(loss.item())
 
+        if scheduler is not None: # Adjust the learning rate
+            scheduler.step() 
+            
         # ======================= validating =======================
         # initialize the model for training
         model.eval()
@@ -192,7 +195,7 @@ def training_loop(train_dataloader, validate_dataloader, model, loss_fn, optimiz
     return model, avg_train_losses, avg_valid_losses
 
 
-def training_loop_branches(train_dataloader, validate_dataloader, model, loss_fn, optimizer, epochs
+def training_loop_branches(train_dataloader, validate_dataloader, model, loss_fn, optimizer, scheduler, epochs
                            , patience, device, minimum_epochs=None):
 
     # to track the average training loss per epoch as the model trains
@@ -206,7 +209,10 @@ def training_loop_branches(train_dataloader, validate_dataloader, model, loss_fn
     avg_valid_losses2 = []  # noise average loss with epoch
 
     # initialize the early_stopping object
-    early_stopping = EarlyStopping(patience=patience, verbose=True)
+    if patience is None: # dont apply early stopping
+        early_stopping = EarlyStopping(patience=1, verbose=False)
+    else:
+        early_stopping = EarlyStopping(patience=patience, verbose=True, delta=1e-6)
 
     for epoch in range(1, epochs + 1):
         # estimate time for each epoch
@@ -244,6 +250,9 @@ def training_loop_branches(train_dataloader, validate_dataloader, model, loss_fn
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+
+        if scheduler is not None: # Adjust the learning rate
+            scheduler.step() 
 
         # ======================= validating =======================
         # initialize the model for training
@@ -293,17 +302,19 @@ def training_loop_branches(train_dataloader, validate_dataloader, model, loss_fn
         train_losses = []
         valid_losses = []
 
-        if (minimum_epochs is None) or ((minimum_epochs is not None) and (epoch > minimum_epochs)):
-            # early_stopping needs the validation loss to check if it has decresed,
-            # and if it has, it will make a checkpoint of the current model
-            early_stopping(valid_loss, model)
+        if patience is not None:
+            if (minimum_epochs is None) or ((minimum_epochs is not None) and (epoch > minimum_epochs)):
+                # early_stopping needs the validation loss to check if it has decresed,
+                # and if it has, it will make a checkpoint of the current model
+                early_stopping(valid_loss, model)
 
-        if early_stopping.early_stop:
-            print("Early stopping")
-            break
+            if early_stopping.early_stop:
+                print("Early stopping")
+                break
 
-        # load the last checkpoint with the best model
-    model.load_state_dict(torch.load('checkpoint.pt'))
+    # load the last checkpoint with the best model if apply early stopping
+    if patience is not None:
+        model.load_state_dict(torch.load('checkpoint.pt'))
 
     partial_loss = [avg_train_losses1, avg_valid_losses1, avg_train_losses2, avg_valid_losses2]
 

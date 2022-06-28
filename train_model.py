@@ -22,7 +22,7 @@ bottleneck_name = "LSTM"
 
 # %% Read the pre-processed datasets
 print("#" * 12 + " Loading data " + "#" * 12)
-model_datasets = './training_datasets/training_datasets_all_snr_40.hdf5'
+model_datasets = '/kuafu/yinjx/WaveDecompNet_dataset/training_datasets/training_datasets_all_snr_40_unshuffled.hdf5'
 with h5py.File(model_datasets, 'r') as f:
     X_train = f['X_train'][:]
     Y_train = f['Y_train'][:]
@@ -70,18 +70,20 @@ model_dataset_dir = model_dataset_dir + '/' + model_name
 mkdir(model_dataset_dir)
 
 batch_size, epochs, lr = 128, 300, 1e-3
-minimum_epochs = 10  # the minimum epochs that the training has to do
-patience = 10  # patience of the early stopping
+minimum_epochs = 30  # the minimum epochs that the training has to do
+patience = 20  # patience of the early stopping
 
 loss_fn = torch.nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-train_iter = DataLoader(training_data, batch_size=batch_size, shuffle=False)
+LR_func = lambda epoch: (epoch+1)/11 if (epoch<=10) else (0.95**epoch if (epoch <50) else 0.95**50) # with warmup
+scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=LR_func, verbose=True)
+train_iter = DataLoader(training_data, batch_size=batch_size, shuffle=True)
 validate_iter = DataLoader(validate_data, batch_size=batch_size, shuffle=False)
 
 print("#" * 12 + " training model " + model_name + " " + "#" * 12)
 
 model, avg_train_losses, avg_valid_losses, partial_loss = training_loop_branches(train_iter, validate_iter,
-                                                                                 model, loss_fn, optimizer,
+                                                                                 model, loss_fn, optimizer, scheduler,
                                                                                  epochs=epochs, patience=patience,
                                                                                  device=try_gpu(),
                                                                                  minimum_epochs=minimum_epochs)
