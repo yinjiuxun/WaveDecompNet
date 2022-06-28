@@ -25,3 +25,5 @@ python train_model.py
 ```bash
 python test_model.py
 ```
+
+There is a notebook showing a example of how to apply the trained model to continous seismic data of IU.POHA and HV.HAT in the folder /apply_to_continuous_data
