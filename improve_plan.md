@@ -1,14 +1,14 @@
-# 🌊 WaveDecompNet — 现代化改造与改进计划 (综合版)
+# 🌊 WaveDecompNet — Modernization & Improvement Plan (Comprehensive)
 
-> **项目定位**: 基于深度学习的时域地震信号与环境噪声分离工具
+> **Project Scope**: Deep learning-based tool for separating time-domain seismic signals from environmental noise
 >
-> **核心架构**: Encoder-Decoder + LSTM Bottleneck + Multi-Head Self-Attention
+> **Core Architecture**: Encoder-Decoder + LSTM Bottleneck + Multi-Head Self-Attention
 >
-> **当前状态**: ⚠️ 创建于约 2021 年，Python 3.9 + PyTorch 1.9.0，依赖严重过时
+> **Current State**: ⚠️ Created ~2021, Python 3.9 + PyTorch 1.9.0, dependencies severely outdated
 
 ---
 
-## 📐 当前架构
+## 📐 Current Architecture
 
 ```
 Seismogram (3 channels)
@@ -40,152 +40,152 @@ Seismogram (3 channels)
 
 ---
 
-## 📑 目录
+## 📑 Table of Contents
 
-- [优先级 P0: 环境部署与依赖更新](#优先级-p0-环境部署与依赖更新)
-  - [Phase 1: 审计现有依赖与代码兼容性](#phase-1-审计现有依赖与代码兼容性)
-  - [Phase 2: 创建现代化环境配置](#phase-2-创建现代化环境配置)
-  - [Phase 3: 在沙箱中验证环境](#phase-3-在沙箱中验证环境)
-- [优先级 P1: 代码现代化适配](#优先级-p1-代码现代化适配)
-  - [Phase 4: 修复 PyTorch API 兼容性问题](#phase-4-修复-pytorch-api-兼容性问题)
-  - [Phase 5: 修复其他 Python 兼容性问题](#phase-5-修复其他-python-兼容性问题)
-- [优先级 P2: 功能验证](#优先级-p2-功能验证)
-  - [Phase 6: 测试现有预训练模型](#phase-6-测试现有预训练模型)
-  - [Phase 7: 验证 Notebook](#phase-7-验证-notebook)
-- [优先级 P3: 训练改进](#优先级-p3-训练改进)
-  - [Phase 8: 训练流程优化](#phase-8-训练流程优化)
-- [优先级 P4: 代码质量与项目结构](#优先级-p4-代码质量与项目结构)
-  - [Phase 9: 项目重构与代码规范](#phase-9-项目重构与代码规范)
-  - [Phase 10: 模型架构改进](#phase-10-模型架构改进)
-- [优先级 P5: 评估与指标](#优先级-p5-评估与指标)
-  - [Phase 11: 综合评估体系](#phase-11-综合评估体系)
-- [优先级 P6: 部署与文档](#优先级-p6-部署与文档)
-  - [Phase 12: 推理脚本与部署](#phase-12-推理脚本与部署)
-  - [Phase 13: 文档完善](#phase-13-文档完善)
-- [实施顺序](#实施顺序)
-- [测试执行指南](#测试执行指南)
-- [测试数据策略](#测试数据策略)
-- [注意事项](#注意事项)
+- [Priority P0: Environment Setup & Dependency Update](#priority-p0-environment-setup--dependency-update-primary-task)
+  - [Phase 1: Audit Existing Dependencies & Code Compatibility](#phase-1-audit-existing-dependencies--code-compatibility)
+  - [Phase 2: Create Modern Environment Configuration](#phase-2-create-modern-environment-configuration)
+  - [Phase 3: Verify Environment on Host Machine](#phase-3-verify-environment-on-host-machine)
+- [Priority P1: Code Modernization](#priority-p1-code-modernization)
+  - [Phase 4: Fix PyTorch API Compatibility Issues](#phase-4-fix-pytorch-api-compatibility-issues)
+  - [Phase 5: Fix Other Python Compatibility Issues](#phase-5-fix-other-python-compatibility-issues)
+- [Priority P2: Functional Verification](#priority-p2-functional-verification)
+  - [Phase 6: Test Existing Pre-trained Models](#phase-6-test-existing-pre-trained-models)
+  - [Phase 7: Verify Notebooks](#phase-7-verify-notebooks)
+- [Priority P3: Training Improvements](#priority-p3-training-improvements)
+  - [Phase 8: Training Pipeline Optimization](#phase-8-training-pipeline-optimization)
+- [Priority P4: Code Quality & Project Structure](#priority-p4-code-quality--project-structure)
+  - [Phase 9: Project Refactoring & Code Standards](#phase-9-project-refactoring--code-standards)
+  - [Phase 10: Model Architecture Improvements](#phase-10-model-architecture-improvements)
+- [Priority P5: Evaluation & Metrics](#priority-p5-evaluation--metrics)
+  - [Phase 11: Comprehensive Evaluation System](#phase-11-comprehensive-evaluation-system)
+- [Priority P6: Deployment & Documentation](#priority-p6-deployment--documentation)
+  - [Phase 12: Inference Script & Deployment](#phase-12-inference-script--deployment)
+  - [Phase 13: Documentation Improvements](#phase-13-documentation-improvements)
+- [Implementation Order](#implementation-order)
+- [Test Execution Guide](#test-execution-guide)
+- [Test Data Strategy](#test-data-strategy)
+- [Important Notes](#important-notes)
 
 ---
 
-## 🔴 优先级 P0: 环境部署与依赖更新 (首要任务)
+## 🔴 Priority P0: Environment Setup & Dependency Update (Primary Task)
 
-> **运行环境**: Host 机器 (本地 GPU) | **Python**: 3.12 | **虚拟环境**: venv | **PyTorch**: CUDA 版本
+> **Runtime Environment**: Host machine (local GPU) | **Python**: 3.12 | **Virtual Environment**: venv | **PyTorch**: CUDA version
 
-### Phase 1: 审计现有依赖与代码兼容性
+### Phase 1: Audit Existing Dependencies & Code Compatibility
 
-**目标**: 全面了解代码中使用的所有依赖和 API，识别过时/弃用的调用。
+**Goal**: Fully understand all dependencies and APIs used in the codebase, identify outdated/deprecated calls.
 
-#### 当前依赖审计
+#### Current Dependency Audit
 
-| 依赖 | 当前版本 (2021) | 用途 |
-|------|----------------|------|
-| Python | 3.9.9 | 运行时 |
-| PyTorch | 1.9.0 | 深度学习框架 |
-| NumPy | 1.22.0 | 数值计算 |
-| SciPy | 1.7.3 | 信号处理 (signal, fft, interpolate) |
-| h5py | 3.6.0 | HDF5 数据读写 |
-| Matplotlib | 3.5.1 | 可视化 |
-| scikit-learn | 1.0.2 | 数据分割、评估指标 |
-| Pillow | 9.0.0 | 图像处理 (间接依赖) |
+| Dependency | Current Version (2021) | Purpose |
+|------------|----------------------|---------|
+| Python | 3.9.9 | Runtime |
+| PyTorch | 1.9.0 | Deep learning framework |
+| NumPy | 1.22.0 | Numerical computing |
+| SciPy | 1.7.3 | Signal processing (signal, fft, interpolate) |
+| h5py | 3.6.0 | HDF5 data I/O |
+| Matplotlib | 3.5.1 | Visualization |
+| scikit-learn | 1.0.2 | Data splitting, evaluation metrics |
+| Pillow | 9.0.0 | Image processing (indirect dependency) |
 
-#### 已识别的过时 API / 潜在问题
+#### Identified Outdated APIs / Potential Issues
 
-> 🔴 **CRITICAL** — 必须立即修复
+> 🔴 **CRITICAL** — Must fix immediately
 >
-> 🟠 **HIGH** — 应在当前迭代中修复
+> 🟠 **HIGH** — Should fix in current iteration
 >
-> 🟡 **MEDIUM** — 建议修复
+> 🟡 **MEDIUM** — Recommended to fix
 >
-> 🟢 **LOW** — 可延后处理
+> 🟢 **LOW** — Can be deferred
 
-| 编号 | 问题 | 严重度 | 位置 |
-|------|------|--------|------|
-| P0-6 | DotProductAttention softmax 维度错误 | 🔴 CRITICAL | `autoencoder_1D_models_torch.py:137` |
-| P0-1 | dtype=torch.float64 在层构造器中 | 🟠 HIGH | `autoencoder_1D_models_torch.py` (多处) |
-| P0-2 | torch.save(model, ...) 保存整个模型 | 🟠 HIGH | `train_model.py:93` |
-| P0-3 | torch.load(...) 缺少 weights_only 参数 | 🟠 HIGH | `test_model.py:50`, `torch_tools.py:193,317` |
-| P0-9 | 推理时缺少 torch.no_grad() | 🟠 HIGH | `test_model.py:60-68,123` |
-| P0-10 | checkpoint 保存到 CWD 而非模型目录 | 🟠 HIGH | `torch_tools.py:193,317` |
-| P0-4 | data_iter.next() 旧式调用 | 🟡 MEDIUM | `test_model.py:120` |
-| P0-5 | os.mkdir() 无存在性检查 | 🟡 MEDIUM | `utilities.py:10-11` |
-| P0-7 | PositionalEncoding dtype 不一致 | 🟡 MEDIUM | `autoencoder_1D_models_torch.py:148-155` |
-| P0-8 | model_same 函数在第一次比较后就返回 | 🟡 MEDIUM | `torch_tools.py:324-330` |
-| P0-11 | 通配符导入 | 🟢 LOW | `test_model.py:11` |
-| P0-12 | 缺少 .gitignore | 🟢 LOW | 项目根目录 |
-| P0-13 | 缺少 LICENSE 文件 | 🟢 LOW | 项目根目录 |
-| P0-14 | environment.yml 硬编码用户路径 | 🟢 LOW | `environment.yml:43` |
+| ID | Issue | Severity | Location |
+|----|-------|----------|----------|
+| P0-6 | DotProductAttention softmax dimension error | 🔴 CRITICAL | `autoencoder_1D_models_torch.py:137` |
+| P0-1 | dtype=torch.float64 in layer constructors | 🟠 HIGH | `autoencoder_1D_models_torch.py` (multiple) |
+| P0-2 | torch.save(model, ...) saves entire model | 🟠 HIGH | `train_model.py:93` |
+| P0-3 | torch.load(...) missing weights_only param | 🟠 HIGH | `test_model.py:50`, `torch_tools.py:193,317` |
+| P0-9 | Missing torch.no_grad() during inference | 🟠 HIGH | `test_model.py:60-68,123` |
+| P0-10 | Checkpoint saved to CWD instead of model dir | 🟠 HIGH | `torch_tools.py:193,317` |
+| P0-4 | Legacy data_iter.next() call | 🟡 MEDIUM | `test_model.py:120` |
+| P0-5 | os.mkdir() without existence check | 🟡 MEDIUM | `utilities.py:10-11` |
+| P0-7 | PositionalEncoding dtype inconsistency | 🟡 MEDIUM | `autoencoder_1D_models_torch.py:148-155` |
+| P0-8 | model_same function returns after first comparison | 🟡 MEDIUM | `torch_tools.py:324-330` |
+| P0-11 | Wildcard imports | 🟢 LOW | `test_model.py:11` |
+| P0-12 | Missing .gitignore | 🟢 LOW | Project root |
+| P0-13 | Missing LICENSE file | 🟢 LOW | Project root |
+| P0-14 | environment.yml hardcoded user path | 🟢 LOW | `environment.yml:43` |
 
-#### 修复方案
+#### Fix Strategies
 
-**P0-6** DotProductAttention softmax 维度错误
+**P0-6** DotProductAttention softmax dimension error
 
 ```python
-# ❌ 错误
-F.softmax(scores, dim=0)  # 对 batch 维度做 softmax
+# ❌ Bug
+F.softmax(scores, dim=0)  # Softmax over batch dimension
 
-# ✅ 修复
-F.softmax(scores, dim=-1)  # 对序列/时间维度做 softmax
+# ✅ Fix
+F.softmax(scores, dim=-1)  # Softmax over sequence/time dimension
 ```
 
-**P0-1** dtype=torch.float64 在层构造器中
+**P0-1** dtype=torch.float64 in layer constructors
 
 ```python
-# ❌ 错误 (PyTorch 2.x 已弃用)
+# ❌ Bug (deprecated in PyTorch 2.x)
 self.enc1 = nn.Conv1d(3, 8, 9, padding='same', dtype=torch.float64)
 
-# ✅ 修复
+# ✅ Fix
 self.enc1 = nn.Conv1d(3, 8, 9, padding='same')
-# 实例化后统一转换
-model.double()  # 或 model.to(torch.float64)
+# Unified conversion after instantiation
+model.double()  # or model.to(torch.float64)
 ```
 
-**P0-2 / P0-3** 保存/加载方式
+**P0-2 / P0-3** Save/Load approach
 
 ```python
-# ❌ 错误
+# ❌ Bug
 torch.save(model, path)
 model = torch.load(path)
 
-# ✅ 修复
+# ✅ Fix
 torch.save(model.state_dict(), path)
 model.load_state_dict(torch.load(path, weights_only=True))
 ```
 
-**P0-4** 旧式迭代器调用
+**P0-4** Legacy iterator call
 
 ```python
-# ❌ 错误
+# ❌ Bug
 data_iter.next()
 
-# ✅ 修复
+# ✅ Fix
 next(data_iter)
 ```
 
-**P0-5** 目录创建
+**P0-5** Directory creation
 
 ```python
-# ❌ 错误
+# ❌ Bug
 os.mkdir(dir_path)
 
-# ✅ 修复
+# ✅ Fix
 os.makedirs(dir_path, exist_ok=True)
 ```
 
 ---
 
-### Phase 2: 创建现代化环境配置
+### Phase 2: Create Modern Environment Configuration
 
-**目标**: 使用 `venv` 创建虚拟环境，配置 Python 3.12 + CUDA PyTorch，确保所有依赖使用最新稳定版本。
+**Goal**: Use `venv` to create virtual environment, configure Python 3.12 + CUDA PyTorch, ensure all dependencies use latest stable versions.
 
-#### 环境架构
+#### Environment Architecture
 
 ```
 ┌─────────────────────────────────────────────────┐
-│              Host 机器环境 (本地 GPU)              │
+│              Host Machine (Local GPU)             │
 │                                                 │
-│  Python 3.12  (系统安装)                         │
+│  Python 3.12  (system install)                   │
 │    └── venv: WaveDecompNet/.venv                 │
 │          ├── torch>=2.5.0  (CUDA 12.x)           │
 │          ├── numpy>=1.26.0                       │
@@ -193,52 +193,52 @@ os.makedirs(dir_path, exist_ok=True)
 │          ├── h5py>=3.11.0                        │
 │          ├── matplotlib>=3.8.0                   │
 │          ├── scikit-learn>=1.5.0                 │
-│          └── pytest, torchinfo (开发依赖)         │
+│          └── pytest, torchinfo (dev dependencies)│
 │                                                 │
-│  训练: 在 Host 机器 GPU 上执行                    │
-│  测试: 在 Host 机器上执行                         │
+│  Training: Runs on Host GPU                      │
+│  Testing: Runs on Host machine                   │
 └─────────────────────────────────────────────────┘
 ```
 
-#### 具体步骤
+#### Step-by-Step Plan
 
-| 步骤 | 内容 | 说明 |
-|------|------|------|
-| P2-1 | 确认 Host 机器 Python 3.12 可用 | `python3.12 --version` |
-| P2-2 | 确认 Host 机器 CUDA 可用 | `nvidia-smi` 查看 CUDA 版本 |
-| P2-3 | 创建 venv 虚拟环境 | `python3.12 -m venv .venv` |
-| P2-4 | 激活并安装依赖 | `source .venv/bin/activate && pip install -r requirements.txt` |
-| P2-5 | 验证 CUDA 可用性 | `python -c "import torch; print(torch.cuda.is_available())"` |
+| Step | Action | Command |
+|------|--------|---------|
+| P2-1 | Verify Python 3.12 available on host | `python3.12 --version` |
+| P2-2 | Verify CUDA available on host | `nvidia-smi` to check CUDA version |
+| P2-3 | Create venv virtual environment | `python3.12 -m venv .venv` |
+| P2-4 | Activate and install dependencies | `source .venv/bin/activate && pip install -r requirements.txt` |
+| P2-5 | Verify CUDA availability | `python -c "import torch; print(torch.cuda.is_available())"` |
 
-#### 创建环境命令 (在 Host 机器上执行)
+#### Environment Setup Commands (Execute on Host Machine)
 
 ```bash
-# 1. 进入项目目录
+# 1. Navigate to project directory
 cd /home/yinjiuxun/hermes_workspace/code/WaveDecompNet
 
-# 2. 确认 Python 3.12
-python3.12 --version  # 应输出 Python 3.12.x
+# 2. Verify Python 3.12
+python3.12 --version  # Should output Python 3.12.x
 
-# 3. 确认 CUDA 驱动
-nvidia-smi  # 查看 CUDA 版本
+# 3. Verify CUDA driver
+nvidia-smi  # Check CUDA version
 
-# 4. 创建虚拟环境
+# 4. Create virtual environment
 python3.12 -m venv .venv
 
-# 5. 激活虚拟环境
+# 5. Activate virtual environment
 source .venv/bin/activate
 
-# 6. 升级 pip
+# 6. Upgrade pip
 pip install --upgrade pip
 
-# 7. 安装依赖
+# 7. Install dependencies
 pip install -r requirements.txt
 
-# 8. 验证安装
+# 8. Verify installation
 python -c "import torch; print(f'PyTorch: {torch.__version__}'); print(f'CUDA: {torch.cuda.is_available()}'); print(f'CUDA version: {torch.version.cuda if torch.cuda.is_available() else \"N/A\"}')"
 ```
 
-#### 推荐 requirements.txt
+#### Recommended requirements.txt
 
 ```txt
 # Core dependencies
@@ -255,114 +255,114 @@ pytest-cov>=5.0.0
 torchinfo>=1.8.0
 ```
 
-#### CUDA 版本选择
+#### CUDA Version Selection
 
-| Host CUDA 版本 | PyTorch 安装命令 |
-|----------------|------------------|
+| Host CUDA Version | PyTorch Install Command |
+|-------------------|-------------------------|
 | CUDA 12.1+ | `pip install torch>=2.5.0 --index-url https://download.pytorch.org/whl/cu121` |
 | CUDA 11.8 | `pip install torch>=2.5.0 --index-url https://download.pytorch.org/whl/cu118` |
 
-> **注意**: PyTorch 默认通过 pip 安装 CPU 版本。如需 CUDA 支持，需指定 `--index-url`。
-> 也可在 requirements.txt 中直接指定：`torch>=2.5.0 --index-url https://download.pytorch.org/whl/cu121`
+> **Note**: PyTorch defaults to CPU version via pip. For CUDA support, specify `--index-url`.
+> Can also specify directly in requirements.txt: `torch>=2.5.0 --index-url https://download.pytorch.org/whl/cu121`
 
 ---
 
-### Phase 3: 在 Host 机器上验证环境
+### Phase 3: Verify Environment on Host Machine
 
-**目标**: 在 Host 机器上验证新环境能正确安装和运行，确保 CUDA 可用。
+**Goal**: Verify the new environment installs and runs correctly on the host machine, ensure CUDA is available.
 
-| 步骤 | 命令 / 操作 | 预期结果 |
-|------|-------------|----------|
+| Step | Command / Action | Expected Result |
+|------|------------------|-----------------|
 | P3-1 | `python --version` | Python 3.12.x |
 | P3-2 | `python -c "import torch; print(torch.__version__)"` | 2.5.x+ |
 | P3-3 | `python -c "import torch; print(torch.cuda.is_available())"` | True |
-| P3-4 | `python -c "import numpy, scipy, h5py, sklearn; print('All imports OK')"` | 无报错 |
-| P3-5 | `python -c "from autoencoder_1D_models_torch import *"` | 无报错 (修复后) |
+| P3-4 | `python -c "import numpy, scipy, h5py, sklearn; print('All imports OK')"` | No errors |
+| P3-5 | `python -c "from autoencoder_1D_models_torch import *"` | No errors (after fixes) |
 
 ---
 
-## 🟠 优先级 P1: 代码现代化适配
+## 🟠 Priority P1: Code Modernization
 
-### Phase 4: 修复 PyTorch API 兼容性问题
+### Phase 4: Fix PyTorch API Compatibility Issues
 
-**目标**: 使所有代码适配 PyTorch 2.x API。
+**Goal**: Make all code compatible with PyTorch 2.x API.
 
-#### 修复清单
+#### Fix Checklist
 
-| 文件 | 修改内容 |
-|------|----------|
-| `autoencoder_1D_models_torch.py` | 移除所有 `dtype=torch.float64` 参数；实例化后统一调用 `.double()`；检查 `PositionalEncoding` 中的 `torch.float32` |
-| `train_model.py` | `torch.save(model, ...)` → `torch.save(model.state_dict(), ...)`；添加 `weights_only=True` |
-| `test_model.py` | `data_iter.next()` → `next(data_iter)`；修改模型加载逻辑；添加 `weights_only=True` |
-| `torch_tools.py` | `torch.load('checkpoint.pt')` → `torch.load('checkpoint.pt', weights_only=True)`；检查 `EarlyStopping` 中的 `torch.save` / `torch.load` |
+| File | Changes |
+|------|---------|
+| `autoencoder_1D_models_torch.py` | Remove all `dtype=torch.float64` parameters; call `.double()` uniformly after instantiation; check `torch.float32` in `PositionalEncoding` |
+| `train_model.py` | `torch.save(model, ...)` → `torch.save(model.state_dict(), ...)`; add `weights_only=True` |
+| `test_model.py` | `data_iter.next()` → `next(data_iter)`; update model loading logic; add `weights_only=True` |
+| `torch_tools.py` | `torch.load('checkpoint.pt')` → `torch.load('checkpoint.pt', weights_only=True)`; check `torch.save` / `torch.load` in `EarlyStopping` |
 
 ---
 
-### Phase 5: 修复其他 Python 兼容性问题
+### Phase 5: Fix Other Python Compatibility Issues
 
-**目标**: 确保代码在 Python 3.12 上无警告运行。
+**Goal**: Ensure code runs without warnings on Python 3.12.
 
-| 步骤 | 内容 |
-|------|------|
+| Step | Action |
+|------|--------|
 | P5-1 | `utilities.py`: `os.mkdir()` → `os.makedirs(exist_ok=True)` |
-| P5-2 | 检查 f-string 兼容性 (应该没问题) |
-| P5-3 | 检查 h5py API 变化 (3.11+ 有一些 breaking changes) |
-| P5-4 | 改进随机种子控制：添加 `set_seed()` 函数设置 `cudnn.deterministic`, `cudnn.benchmark`, `PYTHONHASHSEED` |
+| P5-2 | Check f-string compatibility (should be fine) |
+| P5-3 | Check h5py API changes (3.11+ has some breaking changes) |
+| P5-4 | Improve random seed control: add `set_seed()` function for `cudnn.deterministic`, `cudnn.benchmark`, `PYTHONHASHSEED` |
 
 ---
 
-## 🟡 优先级 P2: 功能验证
+## 🟡 Priority P2: Functional Verification
 
-### Phase 6: 测试现有预训练模型
+### Phase 6: Test Existing Pre-trained Models
 
-**目标**: 确认新环境下预训练模型能正常加载和推理。
+**Goal**: Confirm pre-trained models load and run inference correctly in the new environment.
 
-| 步骤 | 操作 |
-|------|------|
-| P6-1 | 在新环境中加载预训练模型 |
-| P6-2 | 下载训练数据集 (或模拟测试数据) |
-| P6-3 | 运行 `python test_model.py` 验证模型加载和推理 |
-| P6-4 | 检查输出结果是否与预期一致 |
-
----
-
-### Phase 7: 验证 Notebook
-
-**目标**: 确保 Jupyter Notebook 在新环境中可运行。
-
-| 步骤 | 操作 |
-|------|------|
-| P7-1 | 检查 `notebooks/apply_to_continuous_data.ipynb` 的依赖 |
-| P7-2 | 在新环境中运行 Notebook 或逐单元格验证 |
+| Step | Action |
+|------|--------|
+| P6-1 | Load pre-trained model in new environment |
+| P6-2 | Download training dataset (or use synthetic test data) |
+| P6-3 | Run `python test_model.py` to verify model loading and inference |
+| P6-4 | Check output results match expectations |
 
 ---
 
-## 🟢 优先级 P3: 训练改进
+### Phase 7: Verify Notebooks
 
-### Phase 8: 训练流程优化
+**Goal**: Ensure Jupyter Notebooks run in the new environment.
 
-**目标**: 改进训练流程，添加实验跟踪、梯度裁剪、更好的学习率调度等。
-
-| 编号 | 内容 | 说明 |
-|------|------|------|
-| P8-1 | 添加梯度裁剪 | `torch.nn.utils.clip_grad_norm_` |
-| P8-2 | 改进学习率调度器 | CosineAnnealingLR / OneCycleLR |
-| P8-3 | 优化数据加载 | num_workers, pin_memory, prefetch_factor |
-| P8-4 | 添加 TensorBoard 实验跟踪 | loss curves, gradients, histograms |
-| P8-5 | 添加配置文件 + CLI 参数 | argparse |
-| P8-6 | 用 logging 替换 print() | 结构化日志输出 |
-| P8-7 | 确保 GPU 训练 | `model.to('cuda')`, 数据 `.to('cuda')` |
-| P8-8 | 添加设备自动检测 | `device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')` |
+| Step | Action |
+|------|--------|
+| P7-1 | Check dependencies of `notebooks/apply_to_continuous_data.ipynb` |
+| P7-2 | Run Notebook in new environment or verify cell by cell |
 
 ---
 
-## 🔵 优先级 P4: 代码质量与项目结构
+## 🟢 Priority P3: Training Improvements
 
-### Phase 9: 项目重构与代码规范
+### Phase 8: Training Pipeline Optimization
 
-**目标**: 改善项目结构、添加类型注解、文档字符串等。
+**Goal**: Improve training pipeline with experiment tracking, gradient clipping, better learning rate scheduling, etc.
 
-#### 推荐项目结构
+| ID | Action | Details |
+|----|--------|---------|
+| P8-1 | Add gradient clipping | `torch.nn.utils.clip_grad_norm_` |
+| P8-2 | Improve learning rate scheduler | CosineAnnealingLR / OneCycleLR |
+| P8-3 | Optimize data loading | num_workers, pin_memory, prefetch_factor |
+| P8-4 | Add TensorBoard experiment tracking | loss curves, gradients, histograms |
+| P8-5 | Add config file + CLI arguments | argparse |
+| P8-6 | Replace print() with logging | Structured log output |
+| P8-7 | Ensure GPU training | `model.to('cuda')`, data `.to('cuda')` |
+| P8-8 | Add device auto-detection | `device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')` |
+
+---
+
+## 🔵 Priority P4: Code Quality & Project Structure
+
+### Phase 9: Project Refactoring & Code Standards
+
+**Goal**: Improve project structure, add type hints, docstrings, etc.
+
+#### Recommended Project Structure
 
 ```
 WaveDecompNet/
@@ -397,129 +397,129 @@ WaveDecompNet/
 └── README.md
 ```
 
-| 编号 | 内容 | 说明 |
-|------|------|------|
-| P9-1 | 添加标准项目结构 | 见上方目录树 |
-| P9-2 | 添加类型注解 (type hints) | 所有公开函数和类 |
-| P9-3 | 添加 docstrings | Google/NumPy 风格 |
-| P9-4 | 添加权重初始化 | kaiming_normal_, orthogonal_ |
+| ID | Action | Details |
+|----|--------|---------|
+| P9-1 | Add standard project structure | See directory tree above |
+| P9-2 | Add type hints | All public functions and classes |
+| P9-3 | Add docstrings | Google/NumPy style |
+| P9-4 | Add weight initialization | kaiming_normal_, orthogonal_ |
 
 ---
 
-### Phase 10: 模型架构改进
+### Phase 10: Model Architecture Improvements
 
-**目标**: 增强模型架构，添加残差连接、可配置瓶颈等。
+**Goal**: Enhance model architecture with residual connections, configurable bottleneck, etc.
 
-| 编号 | 内容 | 说明 |
-|------|------|------|
-| P10-1 | 在 encoder/decoder 中添加残差/跳跃连接 | 改善梯度流 |
-| P10-2 | 添加 Layer Normalization | 瓶颈后，改善小 batch 稳定性 |
-| P10-3 | 使瓶颈类型可配置 | LSTM, Transformer, Dense |
-| P10-4 | 在 encoder/decoder 中添加 dropout | 0.1-0.2，减少过拟合 |
-| P10-5 | 添加模型摘要工具 | torchinfo |
-
----
-
-## 🟣 优先级 P5: 评估与指标
-
-### Phase 11: 综合评估体系
-
-**目标**: 添加全面的评估指标、频域评估、SNR 分层分析等。
-
-| 编号 | 内容 |
-|------|------|
-| P11-1 | 添加综合评估指标 (SNR 改善、Cross-correlation、Spectral distortion、Amplitude recovery、Onset time detection) |
-| P11-2 | 添加频域评估 (Spectral angle mapper、Frequency-band specific MSE、Spectral convergence) |
-| P11-3 | 添加 SNR 分层评估 (低/中/高 SNR 分别评估) |
-| P11-4 | 添加消融实验框架 |
-| P11-5 | 添加统计显著性检验 |
+| ID | Action | Details |
+|----|--------|---------|
+| P10-1 | Add residual/skip connections in encoder/decoder | Improve gradient flow |
+| P10-2 | Add Layer Normalization | After bottleneck, improve small-batch stability |
+| P10-3 | Make bottleneck type configurable | LSTM, Transformer, Dense |
+| P10-4 | Add dropout in encoder/decoder | 0.1-0.2, reduce overfitting |
+| P10-5 | Add model summary tool | torchinfo |
 
 ---
 
-## 🟤 优先级 P6: 部署与文档
+## 🟣 Priority P5: Evaluation & Metrics
 
-### Phase 12: 推理脚本与部署
+### Phase 11: Comprehensive Evaluation System
 
-**目标**: 添加独立的推理脚本、模型导出、Docker 支持等。
+**Goal**: Add comprehensive evaluation metrics, frequency-domain evaluation, SNR-stratified analysis, etc.
 
-| 编号 | 内容 |
-|------|------|
-| P12-1 | 添加独立推理脚本 (predict.py) — 加载模型、接受地震数据、输出分离信号、支持批量处理 |
-| P12-2 | 添加模型导出格式 (ONNX, TorchScript) |
-| P12-3 | 添加 Docker 支持 |
-| P12-4 | 添加 CI/CD 流水线 (GitHub Actions) |
-
----
-
-### Phase 13: 文档完善
-
-**目标**: 改善 README、添加 API 文档、教程等。
-
-| 编号 | 内容 |
-|------|------|
-| P13-1 | 改善 README.md — 项目描述、安装指南、快速入门、架构图、引用、许可证、论文链接 |
-| P13-2 | 添加 API 文档 (Sphinx/mkdocs) |
-| P13-3 | 添加教程 notebooks |
-| P13-4 | 添加 CONTRIBUTING.md |
+| ID | Action |
+|----|--------|
+| P11-1 | Add comprehensive evaluation metrics (SNR improvement, Cross-correlation, Spectral distortion, Amplitude recovery, Onset time detection) |
+| P11-2 | Add frequency-domain evaluation (Spectral angle mapper, Frequency-band specific MSE, Spectral convergence) |
+| P11-3 | Add SNR-stratified evaluation (Low/Medium/High SNR evaluated separately) |
+| P11-4 | Add ablation study framework |
+| P11-5 | Add statistical significance testing |
 
 ---
 
-## 📋 实施顺序
+## 🟤 Priority P6: Deployment & Documentation
+
+### Phase 12: Inference Script & Deployment
+
+**Goal**: Add standalone inference script, model export, Docker support, etc.
+
+| ID | Action |
+|----|--------|
+| P12-1 | Add standalone inference script (predict.py) — load model, accept seismic data, output separated signals, support batch processing |
+| P12-2 | Add model export formats (ONNX, TorchScript) |
+| P12-3 | Add Docker support |
+| P12-4 | Add CI/CD pipeline (GitHub Actions) |
+
+---
+
+### Phase 13: Documentation Improvements
+
+**Goal**: Improve README, add API docs, tutorials, etc.
+
+| ID | Action |
+|----|--------|
+| P13-1 | Improve README.md — project description, installation guide, quick start, architecture diagram, citations, license, paper link |
+| P13-2 | Add API documentation (Sphinx/mkdocs) |
+| P13-3 | Add tutorial notebooks |
+| P13-4 | Add CONTRIBUTING.md |
+
+---
+
+## 📋 Implementation Order
 
 ```
-Phase 1 (审计) → Phase 2 (环境配置) → Phase 3 (环境验证)
+Phase 1 (Audit) → Phase 2 (Environment Setup) → Phase 3 (Environment Verification)
                                                       │
-Phase 4 (PyTorch 适配) → Phase 5 (Python 适配) → Phase 6 (模型测试)
+Phase 4 (PyTorch Adaptation) → Phase 5 (Python Adaptation) → Phase 6 (Model Testing)
                                                               │
-Phase 7 (Notebook 验证) → Phase 8 (训练改进) → Phase 9 (代码质量)
+Phase 7 (Notebook Verification) → Phase 8 (Training Improvements) → Phase 9 (Code Quality)
                                                         │
-Phase 10 (模型架构) → Phase 11 (评估体系) → Phase 12 (部署)
+Phase 10 (Model Architecture) → Phase 11 (Evaluation System) → Phase 12 (Deployment)
                                                     │
-Phase 13 (文档完善)
+Phase 13 (Documentation)
 ```
 
-### 每阶段完成后
+### After Each Phase
 
-1. ✅ 运行该阶段的所有 **[TEST]** 测试
-2. ✅ 完成 **[VERIFY]** 手动检查
-3. ✅ 提交到 Git (`git add` + `git commit`)
-4. ✅ 确认全部通过后再进入下一阶段
+1. ✅ Run all **[TEST]** tests for that phase
+2. ✅ Complete **[VERIFY]** manual checks
+3. ✅ Commit to Git (`git add` + `git commit`)
+4. ✅ Confirm all pass before proceeding to next phase
 
 ---
 
-## 🧪 测试执行指南
+## 🧪 Test Execution Guide
 
-### 快速测试 (任何改动后)
+### Quick Tests (After Any Changes)
 
 ```bash
 pytest tests/test_attention_softmax.py tests/test_model_same.py -v
 ```
 
-### 阶段特定测试
+### Phase-Specific Tests
 
 ```bash
 pytest tests/test_*.py -k "phase_name" -v
 ```
 
-### 完整测试套件
+### Full Test Suite
 
 ```bash
 pytest tests/ -v --tb=short
 ```
 
-### 带覆盖率
+### With Coverage
 
 ```bash
 pytest tests/ --cov=src --cov-report=html -v
 ```
 
-### CI 风格 (lint + type + test)
+### CI Style (lint + type + test)
 
 ```bash
 flake8 src/ && black --check src/ && mypy src/ && pytest tests/ -v
 ```
 
-### 仅集成测试
+### Integration Tests Only
 
 ```bash
 pytest tests/test_full_pipeline.py -v -s
@@ -527,42 +527,42 @@ pytest tests/test_full_pipeline.py -v -s
 
 ---
 
-## 📦 测试数据策略
+## 📦 Test Data Strategy
 
-### 自动化测试 — 小合成数据集
+### Automated Tests — Small Synthetic Dataset
 
-> 避免 CI 过慢，使用合成数据
+> Avoid slow CI, use synthetic data
 
-| 项目 | 说明 |
-|------|------|
-| 数据量 | 100 个合成地震波形样本 (3 channels, 60 time steps) |
-| 存储位置 | `tests/fixtures/synthetic_data.hdf5` |
-| 训练轮数 | 最小训练 (1-3 epochs) |
-| Batch size | 4 (加速) |
+| Item | Details |
+|------|---------|
+| Data Size | 100 synthetic seismogram samples (3 channels, 60 time steps) |
+| Storage | `tests/fixtures/synthetic_data.hdf5` |
+| Training Epochs | Minimal training (1-3 epochs) |
+| Batch Size | 4 (for speed) |
 
-### 集成测试 — 真实数据
+### Integration Tests — Real Data
 
-| 项目 | 说明 |
-|------|------|
-| 预训练模型 | `Branch_Encoder_Decoder_LSTM/` |
-| 样本数据 | `notebooks/continuous_data/` |
-| 标记方式 | `@pytest.mark.integration` (快速 CI 可跳过) |
-
----
-
-## ⚠️ 注意事项
-
-- **运行环境**: 所有开发、测试和训练均在 Host 机器上进行 (非 Docker 容器)
-- **虚拟环境**: 使用 `venv` (`.venv` 目录)，已添加到 `.gitignore`
-- **Python 版本**: 3.12 (通过 `python3.12` 命令调用)
-- **CUDA**: PyTorch 使用 CUDA 版本，训练在 Host GPU 上执行
-- 所有修改先提交到 Git，每完成一个 Phase 后 commit
-- 预训练模型 (.pth 文件) 使用 `torch.load` 加载时，需确保 `map_location` 正确设置
-- HDF5 数据文件较大，不需要重新生成，可以直接使用现有数据
-- **注意**: `torch.float64` (double precision) 的使用是有意的 (地震数据需要高精度)，迁移时要保留精度
-- 每个阶段的测试应在进入下一阶段之前全部通过
-- 测试作为回归保护：如果未来改动破坏了某些功能，测试套件会捕获它
+| Item | Details |
+|------|---------|
+| Pre-trained Model | `Branch_Encoder_Decoder_LSTM/` |
+| Sample Data | `notebooks/continuous_data/` |
+| Marker | `@pytest.mark.integration` (fast CI can skip) |
 
 ---
 
-> **文档版本**: v1.1 | **最后更新**: 2026-05-18 | **环境**: Python 3.12 + venv + CUDA PyTorch | **维护者**: Jiuxun Yin
+## ⚠️ Important Notes
+
+- **Runtime Environment**: All development, testing, and training run on the Host machine (not Docker container)
+- **Virtual Environment**: Use `venv` (`.venv` directory), added to `.gitignore`
+- **Python Version**: 3.12 (via `python3.12` command)
+- **CUDA**: PyTorch uses CUDA version, training runs on Host GPU
+- All changes committed to Git, commit after each Phase
+- When loading pre-trained models (.pth files) with `torch.load`, ensure `map_location` is set correctly
+- HDF5 data files are large, no need to regenerate, can use existing data directly
+- **Note**: Use of `torch.float64` (double precision) is intentional (seismic data requires high precision), preserve precision during migration
+- Tests for each phase must all pass before moving to the next phase
+- Tests serve as regression protection: if future changes break functionality, the test suite will catch it
+
+---
+
+> **Document Version**: v1.1 | **Last Updated**: 2026-05-18 | **Environment**: Python 3.12 + venv + CUDA PyTorch | **Maintainer**: Jiuxun Yin
