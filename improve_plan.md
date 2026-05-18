@@ -73,9 +73,39 @@ Seismogram (3 channels)
 
 > **Runtime Environment**: Host machine (local GPU) | **Python**: 3.12 | **Virtual Environment**: venv | **PyTorch**: CUDA version
 
-### Phase 1: Audit Existing Dependencies & Code Compatibility
+### ✅ Phase 1: Audit Existing Dependencies & Code Compatibility
+
+**Status**: ✅ **COMPLETED** — Commit `657b298` (2025-07-20)
 
 **Goal**: Fully understand all dependencies and APIs used in the codebase, identify outdated/deprecated calls.
+
+#### Completed Fixes
+
+| ID | Issue | Severity | Status |
+|----|-------|----------|--------|
+| P0-6 | DotProductAttention softmax dimension error | 🔴 CRITICAL | ✅ Fixed |
+| P0-1 | dtype=torch.float64 in layer constructors | 🟠 HIGH | ✅ Fixed |
+| P0-2 | torch.save(model, ...) saves entire model | 🟠 HIGH | ✅ Fixed |
+| P0-3 | torch.load(...) missing weights_only param | 🟠 HIGH | ✅ Fixed |
+| P0-9 | Missing torch.no_grad() during inference | 🟠 HIGH | ✅ Fixed |
+| P0-4 | Legacy data_iter.next() call | 🟡 MEDIUM | ✅ Fixed |
+| P0-5 | os.mkdir() without existence check | 🟡 MEDIUM | ✅ Fixed |
+| P0-7 | PositionalEncoding dtype inconsistency | 🟡 MEDIUM | ✅ Fixed |
+| P0-8 | model_same function returns after first comparison | 🟡 MEDIUM | ✅ Fixed |
+| P0-11 | Wildcard imports | 🟢 LOW | ✅ Fixed |
+| P0-12 | Missing .gitignore | 🟢 LOW | ✅ Fixed |
+| NumPy 2.0 | np.Inf → np.inf compatibility | 🟠 HIGH | ✅ Fixed |
+
+#### Test Results
+- **17/18 tests passed**, 1 xfailed (original architecture issue - decoder stride mismatch)
+- Test suite: `tests/test_phase1_fixes.py`
+
+#### Remaining (deferred to later phases)
+| ID | Issue | Severity | Deferred To |
+|----|-------|----------|-------------|
+| P0-10 | Checkpoint saved to CWD instead of model dir | 🟠 HIGH | Phase 8 (Training Pipeline) |
+| P0-13 | Missing LICENSE file | 🟢 LOW | Phase 13 (Documentation) |
+| P0-14 | environment.yml hardcoded user path | 🟢 LOW | Phase 2 (Environment Config) |
 
 #### Current Dependency Audit
 
