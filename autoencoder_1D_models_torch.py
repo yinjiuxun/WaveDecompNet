@@ -11,21 +11,21 @@ class SeismogramEncoder(nn.Module):
     def __init__(self):
         super(SeismogramEncoder, self).__init__()
         # convolutional layers
-        self.enc1 = nn.Conv1d(3, 8, 9, padding='same', dtype=torch.float64)
-        self.enc2 = nn.Conv1d(8, 8, 9, stride=2, padding=4, dtype=torch.float64)
-        self.enc3c = nn.Conv1d(8, 16, 7, padding='same', dtype=torch.float64)
-        self.enc4 = nn.Conv1d(16, 16, 7, stride=2, padding=3, dtype=torch.float64)
-        self.enc5c = nn.Conv1d(16, 32, 5, padding='same', dtype=torch.float64)
-        self.enc6 = nn.Conv1d(32, 32, 5, stride=2, padding=2, dtype=torch.float64)
-        self.enc7c = nn.Conv1d(32, 64, 3, padding='same', dtype=torch.float64)
+        self.enc1 = nn.Conv1d(3, 8, 9, padding='same')
+        self.enc2 = nn.Conv1d(8, 8, 9, stride=2, padding=4)
+        self.enc3c = nn.Conv1d(8, 16, 7, padding='same')
+        self.enc4 = nn.Conv1d(16, 16, 7, stride=2, padding=3)
+        self.enc5c = nn.Conv1d(16, 32, 5, padding='same')
+        self.enc6 = nn.Conv1d(32, 32, 5, stride=2, padding=2)
+        self.enc7c = nn.Conv1d(32, 64, 3, padding='same')
         # batch-normalization layers
-        self.bn1 = nn.BatchNorm1d(8, dtype=torch.float64)
-        self.bn2 = nn.BatchNorm1d(8, dtype=torch.float64)
-        self.bn3 = nn.BatchNorm1d(16, dtype=torch.float64)
-        self.bn4 = nn.BatchNorm1d(16, dtype=torch.float64)
-        self.bn5 = nn.BatchNorm1d(32, dtype=torch.float64)
-        self.bn6 = nn.BatchNorm1d(32, dtype=torch.float64)
-        self.bn7 = nn.BatchNorm1d(64, dtype=torch.float64)
+        self.bn1 = nn.BatchNorm1d(8)
+        self.bn2 = nn.BatchNorm1d(8)
+        self.bn3 = nn.BatchNorm1d(16)
+        self.bn4 = nn.BatchNorm1d(16)
+        self.bn5 = nn.BatchNorm1d(32)
+        self.bn6 = nn.BatchNorm1d(32)
+        self.bn7 = nn.BatchNorm1d(64)
 
     def forward(self, x):
         x = F.relu(self.bn1(self.enc1(x)))
@@ -51,23 +51,23 @@ class SeismogramDecoder(nn.Module):
         # bottleneck to map features of input seismograms to earthquake signals or ambient noise
         self.bottleneck = bottleneck
         # transpose convolutional layers
-        self.dec1c = nn.ConvTranspose1d(64, 64, 3, stride=3, dtype=torch.float64)
-        self.dec2 = nn.ConvTranspose1d(64, 32, 3, padding=1, dtype=torch.float64)
-        self.dec3c = nn.ConvTranspose1d(32, 32, 5, stride=2, padding=2, output_padding=1, dtype=torch.float64)
-        self.dec4 = nn.ConvTranspose1d(32, 16, 5, padding=2, dtype=torch.float64)
-        self.dec5c = nn.ConvTranspose1d(16, 16, 7, stride=2, padding=3, output_padding=1, dtype=torch.float64)
-        self.dec6 = nn.ConvTranspose1d(16, 8, 7, padding=3, dtype=torch.float64)
-        self.dec7 = nn.ConvTranspose1d(8, 8, 9, stride=2, padding=4, output_padding=1, dtype=torch.float64)
-        self.dec8 = nn.ConvTranspose1d(8, 3, 9, padding=4, dtype=torch.float64)
+        self.dec1c = nn.ConvTranspose1d(64, 64, 3, stride=3)
+        self.dec2 = nn.ConvTranspose1d(64, 32, 3, padding=1)
+        self.dec3c = nn.ConvTranspose1d(32, 32, 5, stride=2, padding=2, output_padding=1)
+        self.dec4 = nn.ConvTranspose1d(32, 16, 5, padding=2)
+        self.dec5c = nn.ConvTranspose1d(16, 16, 7, stride=2, padding=3, output_padding=1)
+        self.dec6 = nn.ConvTranspose1d(16, 8, 7, padding=3)
+        self.dec7 = nn.ConvTranspose1d(8, 8, 9, stride=2, padding=4, output_padding=1)
+        self.dec8 = nn.ConvTranspose1d(8, 3, 9, padding=4)
         # batch-normalization layers
-        self.bn8 = nn.BatchNorm1d(64, dtype=torch.float64)
-        self.bn9 = nn.BatchNorm1d(32, dtype=torch.float64)
-        self.bn10 = nn.BatchNorm1d(32, dtype=torch.float64)
-        self.bn11 = nn.BatchNorm1d(16, dtype=torch.float64)
-        self.bn12 = nn.BatchNorm1d(16, dtype=torch.float64)
-        self.bn13 = nn.BatchNorm1d(8, dtype=torch.float64)
-        self.bn14 = nn.BatchNorm1d(8, dtype=torch.float64)
-        self.bn15 = nn.BatchNorm1d(3, dtype=torch.float64)
+        self.bn8 = nn.BatchNorm1d(64)
+        self.bn9 = nn.BatchNorm1d(32)
+        self.bn10 = nn.BatchNorm1d(32)
+        self.bn11 = nn.BatchNorm1d(16)
+        self.bn12 = nn.BatchNorm1d(16)
+        self.bn13 = nn.BatchNorm1d(8)
+        self.bn14 = nn.BatchNorm1d(8)
+        self.bn15 = nn.BatchNorm1d(3)
 
     def forward(self, x, x1, x2, x3):
         if self.bottleneck is not None:
@@ -134,7 +134,7 @@ class DotProductAttention(nn.Module):
         d = queries.shape[-1]
         # Set `transpose_b=True` to swap the last two dimensions of `keys`
         scores = torch.bmm(queries, keys.transpose(1, 2)) / math.sqrt(d)
-        self.attention_weights = F.softmax(scores, dim=0)
+        self.attention_weights = F.softmax(scores, dim=-1)
         return torch.bmm(self.dropout(self.attention_weights), values)
 
 
@@ -146,10 +146,10 @@ class PositionalEncoding(nn.Module):
         self.dropout = nn.Dropout(dropout)
         # Create a long enough `P`
         self.P = torch.zeros((1, max_len, num_hiddens))
-        X = torch.arange(max_len, dtype=torch.float32).reshape(
+        X = torch.arange(max_len, dtype=torch.float64).reshape(
             -1, 1) / torch.pow(
             10000,
-            torch.arange(0, num_hiddens, 2, dtype=torch.float32) /
+            torch.arange(0, num_hiddens, 2, dtype=torch.float64) /
             num_hiddens)
         self.P[:, :, 0::2] = torch.sin(X)
         self.P[:, :, 1::2] = torch.cos(X)
@@ -194,10 +194,10 @@ class MultiHeadAttention(nn.Module):
         super(MultiHeadAttention, self).__init__(**kwargs)
         self.num_heads = num_heads
         self.attention = DotProductAttention(dropout)
-        self.W_q = nn.Linear(query_size, num_hiddens, bias=bias, dtype=torch.float64)
-        self.W_k = nn.Linear(key_size, num_hiddens, bias=bias, dtype=torch.float64)
-        self.W_v = nn.Linear(value_size, num_hiddens, bias=bias, dtype=torch.float64)
-        self.W_o = nn.Linear(num_hiddens, num_hiddens, bias=bias, dtype=torch.float64)
+        self.W_q = nn.Linear(query_size, num_hiddens, bias=bias)
+        self.W_k = nn.Linear(key_size, num_hiddens, bias=bias)
+        self.W_v = nn.Linear(value_size, num_hiddens, bias=bias)
+        self.W_o = nn.Linear(num_hiddens, num_hiddens, bias=bias)
 
     def forward(self, queries, keys, values):
         # Shape of `queries`, `keys`, or `values`:
@@ -241,7 +241,7 @@ class Attention_bottleneck_LSTM(nn.Module):
         super(Attention_bottleneck_LSTM, self).__init__(**kwargs)
         # self.pe = PositionalEncoding(num_hiddens, dropout)
         self.lstm = torch.nn.LSTM(num_hiddens, int(num_hiddens / 2), 1, bidirectional=True,
-                                  batch_first=True, dtype=torch.float64)
+                                  batch_first=True)
         self.attention = MultiHeadAttention(num_hiddens, num_hiddens,
                                             num_hiddens, num_hiddens,
                                             num_heads, dropout)

@@ -3,11 +3,13 @@ import matplotlib
 from matplotlib import pyplot as plt
 import numpy as np
 import h5py
+import copy
+import torch
 from utilities import mkdir, waveform_fft
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
 from torch_tools import WaveformDataset, try_gpu, parameter_number
-from autoencoder_1D_models_torch import *
+from autoencoder_1D_models_torch import SeismogramEncoder, SeismogramDecoder, SeisSeparator
 from sklearn.metrics import mean_squared_error, explained_variance_score
 
 matplotlib.rcParams.update({'font.size': 10})
@@ -47,7 +49,15 @@ validate_data = WaveformDataset(X_validate, Y_validate)
 test_data = WaveformDataset(X_test, Y_test)
 
 # %% load model
-model = torch.load(model_dir + '/' + f'{model_name}_Model.pth', map_location=try_gpu())
+# Reconstruct model architecture first
+bottleneck = torch.nn.LSTM(64, 32, 2, bidirectional=True, batch_first=True)
+bottleneck_earthquake = copy.deepcopy(bottleneck)
+bottleneck_noise = copy.deepcopy(bottleneck)
+encoder = SeismogramEncoder()
+decoder_earthquake = SeismogramDecoder(bottleneck=bottleneck_earthquake)
+decoder_noise = SeismogramDecoder(bottleneck=bottleneck_noise)
+model = SeisSeparator(model_name, encoder, decoder_earthquake, decoder_noise)
+model.load_state_dict(torch.load(model_dir + '/' + f'{model_name}_Model.pth', map_location=try_gpu(), weights_only=True))
 model = model.to('cpu')
 
 batch_size = 256
@@ -57,15 +67,16 @@ test_iter = DataLoader(test_data, batch_size=batch_size, shuffle=False)
 loss_fn = torch.nn.MSELoss()
 test_loss = 0.0
 model.eval()
-for X, y in test_iter:
-    if len(y.data) != batch_size:
-        break
-    # forward pass: compute predicted outputs by passing inputs to the model
-    output1, output2 = model(X)
-    # calculate the loss
-    loss = loss_fn(output1, y) + loss_fn(output2, X - y)
-    # update test loss
-    test_loss += loss.item() * X.size(0)
+with torch.no_grad():
+    for X, y in test_iter:
+        if len(y.data) != batch_size:
+            break
+        # forward pass: compute predicted outputs by passing inputs to the model
+        output1, output2 = model(X)
+        # calculate the loss
+        loss = loss_fn(output1, y) + loss_fn(output2, X - y)
+        # update test loss
+        test_loss += loss.item() * X.size(0)
 
 test_loss = test_loss / len(test_iter.dataset)
 print('Test Loss: {:.6f}\n'.format(test_loss))
@@ -117,10 +128,11 @@ plt.savefig(figure_dir + f"/{model_name}_Loss_evolution.pdf", bbox_inches='tight
 # %% predict the waveforms
 # obtain one batch of test images
 data_iter = iter(test_iter)
-noisy_signal, clean_signal = data_iter.next()
+noisy_signal, clean_signal = next(data_iter)
 
 # get sample outputs
-denoised_signal, separated_noise = model(noisy_signal)
+with torch.no_grad():
+    denoised_signal, separated_noise = model(noisy_signal)
 
 # Convert tensor to numpy
 noisy_signal = noisy_signal.detach().numpy()

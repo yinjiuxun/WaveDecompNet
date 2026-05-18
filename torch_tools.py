@@ -56,7 +56,7 @@ class EarlyStopping:
         self.counter = 0
         self.best_score = None
         self.early_stop = False
-        self.val_loss_min = np.Inf
+        self.val_loss_min = np.inf
         self.delta = delta
         self.path = path
         self.trace_func = trace_func
@@ -190,7 +190,7 @@ def training_loop(train_dataloader, validate_dataloader, model, loss_fn, optimiz
             break
 
         # load the last checkpoint with the best model
-    model.load_state_dict(torch.load('checkpoint.pt'))
+    model.load_state_dict(torch.load('checkpoint.pt', weights_only=True))
 
     return model, avg_train_losses, avg_valid_losses
 
@@ -314,7 +314,7 @@ def training_loop_branches(train_dataloader, validate_dataloader, model, loss_fn
 
     # load the last checkpoint with the best model if apply early stopping
     if patience is not None:
-        model.load_state_dict(torch.load('checkpoint.pt'))
+        model.load_state_dict(torch.load('checkpoint.pt', weights_only=True))
 
     partial_loss = [avg_train_losses1, avg_valid_losses1, avg_train_losses2, avg_valid_losses2]
 
@@ -326,5 +326,4 @@ def model_same(model1, model2):
     for p1, p2 in zip(model1.parameters(), model2.parameters()):
         if p1.data.ne(p2.data).sum() > 0:
             return False
-        else:
-            return True
+    return True

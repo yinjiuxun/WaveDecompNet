@@ -49,7 +49,7 @@ validate_data = WaveformDataset(X_validate, Y_validate)
 
 # The encoder-decoder model with LSTM bottleneck
 bottleneck = torch.nn.LSTM(64, 32, 2, bidirectional=True,
-                           batch_first=True, dtype=torch.float64)
+                           batch_first=True)
 
 # Give a name to the network
 model_name = model_structure + "_" + bottleneck_name
@@ -90,7 +90,7 @@ model, avg_train_losses, avg_valid_losses, partial_loss = training_loop_branches
 print("Training is done!")
 
 # %% Save the model
-torch.save(model, model_dataset_dir + f'/{model_name}_Model.pth')
+torch.save(model.state_dict(), model_dataset_dir + f'/{model_name}_Model.pth')
 
 loss = avg_train_losses
 val_loss = avg_valid_losses
