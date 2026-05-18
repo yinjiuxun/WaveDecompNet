@@ -1,0 +1,12 @@
+# Core dependencies
+torch>=2.5.0
+numpy>=1.26.0
+scipy>=1.13.0
+h5py>=3.11.0
+matplotlib>=3.8.0
+scikit-learn>=1.5.0
+
+# Development dependencies
+pytest>=8.0.0
+pytest-cov>=5.0.0
+torchinfo>=1.8.0
