@@ -401,14 +401,53 @@ All Phase 4 items are covered by `tests/test_phase1_fixes.py`:
 
 ### Phase 5: Fix Other Python Compatibility Issues
 
+**Status**: ✅ **COMPLETED** — All Python 3.12 compatibility verified (2026-05-18)
+
 **Goal**: Ensure code runs without warnings on Python 3.12.
 
-| Step | Action |
-|------|--------|
-| P5-1 | `utilities.py`: `os.mkdir()` → `os.makedirs(exist_ok=True)` |
-| P5-2 | Check f-string compatibility (should be fine) |
-| P5-3 | Check h5py API changes (3.11+ has some breaking changes) |
-| P5-4 | Improve random seed control: add `set_seed()` function for `cudnn.deterministic`, `cudnn.benchmark`, `PYTHONHASHSEED` |
+#### Fix Checklist Verification
+
+| Step | Action | Status | Verified By |
+|------|--------|--------|-------------|
+| P5-1 | `utilities.py`: `os.mkdir()` → `os.makedirs(exist_ok=True)` | ✅ Already done | TestP5_1_MakedirsExistOk (3 tests) |
+| P5-2 | Check f-string compatibility | ✅ Compatible | TestP5_2_FStringCompatibility (3 tests) |
+| P5-3 | Check h5py API changes (3.11+) | ✅ Compatible | TestP5_3_H5pyApiCompatibility (3 tests) |
+| P5-4 | Improve random seed control: add `set_seed()` function | ✅ Implemented | TestP5_4_SetSeed (8 tests) |
+
+#### Detailed Verification
+
+**P5-1: `utilities.py` mkdir** (Line 9-10)
+- ✅ `mkdir()` function already uses `os.makedirs(dir_path, exist_ok=True)`
+- ✅ Idempotent, supports nested paths
+
+**P5-2: f-string 兼容性**
+- ✅ 仅 1 处 f-string 使用 (test_model.py:126)
+- ✅ Python 3.12 完全兼容
+
+**P5-3: h5py API 兼容性** (3.11+)
+- ✅ `h5py.File(path, 'r')` — 标准读取模式
+- ✅ `h5py.File(path, 'w')` — 标准写入模式
+- ✅ `f.create_dataset()` — 标准 API
+- ✅ `f.attrs[key]` — 标准属性访问
+- ✅ 未使用已废弃参数 (swmr/libver/driver)
+
+**P5-4: 随机种子控制** (`torch_tools.py` `set_seed()`)
+- ✅ `random.seed(seed)` — Python 随机种子
+- ✅ `np.random.seed(seed)` — NumPy 随机种子
+- ✅ `torch.manual_seed(seed)` — PyTorch CPU 随机种子
+- ✅ `torch.cuda.manual_seed_all(seed)` — PyTorch CUDA 随机种子
+- ✅ `torch.backends.cudnn.deterministic = True` — cuDNN 确定性模式
+- ✅ `torch.backends.cudnn.benchmark = False` — 禁用 cuDNN 自动调优
+- ✅ `os.environ["PYTHONHASHSEED"] = str(seed)` — Python 哈希种子
+- ✅ `train_model.py` 已更新使用 `set_seed(99)` 替代分散的种子设置
+
+#### Test Coverage
+
+`tests/test_phase5_fixes.py` 包含 17 个测试：
+- TestP5_1_MakedirsExistOk: 3 tests (mkdir 功能验证)
+- TestP5_2_FStringCompatibility: 3 tests (f-string 兼容性)
+- TestP5_3_H5pyApiCompatibility: 3 tests (h5py API 兼容性)
+- TestP5_4_SetSeed: 8 tests (随机种子控制)
 
 ---
 
