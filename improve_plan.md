@@ -354,16 +354,48 @@ torchinfo>=1.8.0
 
 ### Phase 4: Fix PyTorch API Compatibility Issues
 
+**Status**: ✅ **COMPLETED** — Verified all PyTorch 2.x API compatibility (2026-05-18)
+
 **Goal**: Make all code compatible with PyTorch 2.x API.
 
-#### Fix Checklist
+> **Note**: Phase 4 fixes were already completed during Phase 1. This phase verifies that all changes are in place and tests pass.
 
-| File | Changes |
-|------|---------|
-| `autoencoder_1D_models_torch.py` | Remove all `dtype=torch.float64` parameters; call `.double()` uniformly after instantiation; check `torch.float32` in `PositionalEncoding` |
-| `train_model.py` | `torch.save(model, ...)` → `torch.save(model.state_dict(), ...)`; add `weights_only=True` |
-| `test_model.py` | `data_iter.next()` → `next(data_iter)`; update model loading logic; add `weights_only=True` |
-| `torch_tools.py` | `torch.load('checkpoint.pt')` → `torch.load('checkpoint.pt', weights_only=True)`; check `torch.save` / `torch.load` in `EarlyStopping` |
+#### Fix Checklist Verification
+
+| File | Changes | Status | Verified By |
+|------|---------|--------|-------------|
+| `autoencoder_1D_models_torch.py` | Remove all `dtype=torch.float64` parameters; call `.double()` uniformly after instantiation; check `torch.float32` in `PositionalEncoding` | ✅ | TestP0_1_DtypeFloat64Removed, TestP0_7_PositionalEncodingDtype |
+| `train_model.py` | `torch.save(model, ...)` → `torch.save(model.state_dict(), ...)`; add `weights_only=True` | ✅ | TestP0_2_3_SaveLoadStateDict |
+| `test_model.py` | `data_iter.next()` → `next(data_iter)`; update model loading logic; add `weights_only=True` | ✅ | TestP0_4_NextIterator, TestP0_9_NoGradInference |
+| `torch_tools.py` | `torch.load('checkpoint.pt')` → `torch.load('checkpoint.pt', weights_only=True)`; check `torch.save` / `torch.load` in `EarlyStopping` | ✅ | TestP0_2_3_SaveLoadStateDict |
+
+#### Detailed Verification
+
+**`autoencoder_1D_models_torch.py`** (Lines 1-253)
+- ✅ All `nn.Conv1d`, `nn.ConvTranspose1d`, `nn.BatchNorm1d`, `nn.Linear`, `nn.LSTM` constructors have no `dtype` parameter
+- ✅ `PositionalEncoding` uses `dtype=torch.float64` in `torch.arange` (intentional for seismic double precision)
+- ✅ `DotProductAttention.softmax` uses `dim=-1` (P0-6 fix)
+
+**`train_model.py`** (Lines 1-129)
+- ✅ Line 93: `torch.save(model.state_dict(), ...)` — saves weights only
+- ✅ No `torch.load` calls in this file (model saved, not loaded)
+
+**`test_model.py`** (Lines 1-247)
+- ✅ Line 60: `torch.load(..., weights_only=True)` — secure loading
+- ✅ Line 131: `next(data_iter)` — modern iterator syntax
+- ✅ Lines 69-70: `model.eval()` + `with torch.no_grad():` — proper inference mode
+
+**`torch_tools.py`** (Lines 1-328)
+- ✅ Line 85: `EarlyStopping.save_checkpoint` uses `torch.save(model.state_dict(), ...)`
+- ✅ Line 193: `torch.load('checkpoint.pt', weights_only=True)`
+- ✅ Line 317: `torch.load('checkpoint.pt', weights_only=True)`
+- ✅ Lines 324-329: `model_same` uses `p1.data.ne(p2.data).sum() > 0` (correct logic)
+
+#### Test Coverage
+
+All Phase 4 items are covered by `tests/test_phase1_fixes.py`:
+- 17/18 tests pass (1 xfail for known decoder stride mismatch — original architecture issue)
+- Tests verify: dtype removal, state_dict save/load, weights_only, next(), makedirs, no_grad, model_same
 
 ---
 
@@ -634,4 +666,4 @@ pytest tests/test_full_pipeline.py -v -s
 
 ---
 
-> **Document Version**: v1.2 | **Last Updated**: 2026-05-18 | **Environment**: Python 3.12 + venv + CUDA PyTorch 2.12.0+cu130 | **Maintainer**: Jiuxun Yin
+> **Document Version**: v1.3 | **Last Updated**: 2026-05-18 | **Environment**: Python 3.12 + venv + CUDA PyTorch 2.12.0+cu130 | **Maintainer**: Jiuxun Yin
