@@ -3,7 +3,27 @@ from torch.utils.data import Dataset
 import os
 import h5py
 import numpy as np
+import random
 import time
+
+
+def set_seed(seed: int = 42) -> None:
+    """Set random seed for reproducible results.
+
+    Sets seeds for Python random, NumPy, PyTorch CPU, and PyTorch CUDA.
+    Also configures cuDNN for deterministic behavior.
+
+    Args:
+        seed: Random seed value (default: 42).
+    """
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    if torch.cuda.is_available():
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+    os.environ["PYTHONHASHSEED"] = str(seed)
 
 
 class WaveformDataset(Dataset):

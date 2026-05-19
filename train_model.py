@@ -9,7 +9,7 @@ import random
 from utilities import mkdir
 
 import torch
-from torch_tools import WaveformDataset, try_gpu, training_loop_branches
+from torch_tools import WaveformDataset, try_gpu, training_loop_branches, set_seed
 from torch.utils.data import DataLoader
 from autoencoder_1D_models_torch import SeismogramEncoder, SeismogramDecoder, SeisSeparator
 
@@ -38,9 +38,7 @@ X_validate, X_test, Y_validate, Y_test = train_test_split(X_test, Y_test,
                                                           test_size=test_size, random_state=rand_seed2)
 
 # Give a fixed seed for model initialization
-torch.manual_seed(99)
-random.seed(0)
-np.random.seed(20)
+set_seed(99)
 
 # Convert to the dataset class for Pytorch (here simply load all the data,
 # but for the sake of memory, can also use WaveformDataset_h5)
