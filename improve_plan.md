@@ -207,6 +207,8 @@ os.makedirs(dir_path, exist_ok=True)
 
 ### Phase 2: Create Modern Environment Configuration
 
+**Status**: ✅ **COMPLETED** — venv created, requirements.txt updated, dependencies installed (2026-05-18)
+
 **Goal**: Use `venv` to create virtual environment, configure Python 3.12 + CUDA PyTorch, ensure all dependencies use latest stable versions.
 
 #### Environment Architecture
@@ -232,13 +234,44 @@ os.makedirs(dir_path, exist_ok=True)
 
 #### Step-by-Step Plan
 
-| Step | Action | Command |
-|------|--------|---------|
-| P2-1 | Verify Python 3.12 available on host | `python3.12 --version` |
-| P2-2 | Verify CUDA available on host | `nvidia-smi` to check CUDA version |
-| P2-3 | Create venv virtual environment | `python3.12 -m venv .venv` |
-| P2-4 | Activate and install dependencies | `source .venv/bin/activate && pip install -r requirements.txt` |
-| P2-5 | Verify CUDA availability | `python -c "import torch; print(torch.cuda.is_available())"` |
+| Step | Action | Status |
+|------|--------|--------|
+| P2-1 | Verify Python 3.12 available on host | ✅ |
+| P2-2 | Verify CUDA available on host | ✅ |
+| P2-3 | Create venv virtual environment | ✅ |
+| P2-4 | Activate and install dependencies | ✅ |
+| P2-5 | Verify CUDA availability | ✅ |
+
+#### ⚠️ 常见问题与解决方案
+
+**问题 1：Ubuntu 22.04+ 报 `externally-managed-environment` 错误**
+
+Ubuntu 22.04+ 的系统 Python 不允许直接 `pip install`。解决方法是创建虚拟环境：
+
+```bash
+# 创建虚拟环境
+python3 -m venv .venv
+
+# 激活虚拟环境
+source .venv/bin/activate
+
+# 激活后再安装（提示符前会出现 (.venv)）
+pip install -r requirements.txt
+```
+
+**问题 2：`--index-url` 导致 `No matching distribution found`**
+
+`--index-url` 会**替换**默认的 PyPI 源，PyTorch 仓库里没有 numpy、scipy 等其他包，导致安装失败：
+
+```bash
+# ❌ 错误用法 — 替换了 PyPI，其他包找不到
+pip install -r requirements.txt --index-url https://download.pytorch.org/whl/cu121
+
+# ✅ 正确用法 — 额外索引，保留 PyPI + PyTorch 仓库
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
+```
+
+原理：`--extra-index-url` 把 PyTorch 仓库作为**额外**索引源，同时保留默认的 PyPI。这样 PyTorch 从专用仓库安装（带 CUDA 支持），其他包从 PyPI 安装。
 
 #### Environment Setup Commands (Execute on Host Machine)
 
@@ -261,11 +294,11 @@ source .venv/bin/activate
 # 6. Upgrade pip
 pip install --upgrade pip
 
-# 7. Install dependencies
-pip install -r requirements.txt
+# 7. Install dependencies (use --extra-index-url, NOT --index-url!)
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
 
 # 8. Verify installation
-python -c "import torch; print(f'PyTorch: {torch.__version__}'); print(f'CUDA: {torch.cuda.is_available()}'); print(f'CUDA version: {torch.version.cuda if torch.cuda.is_available() else \"N/A\"}')"
+python -c "import torch; print(f'PyTorch: {torch.__version__}'); print(f'CUDA: {torch.cuda.is_available()}'); print(f'CUDA version: {torch.version.cuda if torch.cuda.is_available() else \"N/A\"}')\"
 ```
 
 #### Recommended requirements.txt
@@ -289,11 +322,11 @@ torchinfo>=1.8.0
 
 | Host CUDA Version | PyTorch Install Command |
 |-------------------|-------------------------|
-| CUDA 12.1+ | `pip install torch>=2.5.0 --index-url https://download.pytorch.org/whl/cu121` |
-| CUDA 11.8 | `pip install torch>=2.5.0 --index-url https://download.pytorch.org/whl/cu118` |
+| CUDA 12.1+ | `pip install torch>=2.5.0 --extra-index-url https://download.pytorch.org/whl/cu121` |
+| CUDA 11.8 | `pip install torch>=2.5.0 --extra-index-url https://download.pytorch.org/whl/cu118` |
 
-> **Note**: PyTorch defaults to CPU version via pip. For CUDA support, specify `--index-url`.
-> Can also specify directly in requirements.txt: `torch>=2.5.0 --index-url https://download.pytorch.org/whl/cu121`
+> **Note**: PyTorch defaults to CPU version via pip. For CUDA support, use `--extra-index-url` (NOT `--index-url`).
+> `--index-url` replaces PyPI entirely, causing other packages to fail. `--extra-index-url` adds PyTorch as an additional source alongside PyPI.
 
 ---
 
