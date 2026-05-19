@@ -299,15 +299,21 @@ torchinfo>=1.8.0
 
 ### Phase 3: Verify Environment on Host Machine
 
+**Status**: ✅ **COMPLETED** — PyTorch 2.12.0+cu130, CUDA available, all imports OK (2026-05-18)
+
 **Goal**: Verify the new environment installs and runs correctly on the host machine, ensure CUDA is available.
 
-| Step | Command / Action | Expected Result |
-|------|------------------|-----------------|
-| P3-1 | `python --version` | Python 3.12.x |
-| P3-2 | `python -c "import torch; print(torch.__version__)"` | 2.5.x+ |
-| P3-3 | `python -c "import torch; print(torch.cuda.is_available())"` | True |
-| P3-4 | `python -c "import numpy, scipy, h5py, sklearn; print('All imports OK')"` | No errors |
-| P3-5 | `python -c "from autoencoder_1D_models_torch import *"` | No errors (after fixes) |
+#### Verification Results
+
+| Step | Command / Action | Expected Result | Actual Result |
+|------|------------------|-----------------|---------------|
+| P3-1 | `python --version` | Python 3.12.x | ✅ Python 3.12 |
+| P3-2 | `python -c "import torch; print(torch.__version__)"` | 2.5.x+ | ✅ 2.12.0+cu130 |
+| P3-3 | `python -c "import torch; print(torch.cuda.is_available())"` | True | ✅ True |
+| P3-4 | `python -c "import numpy, scipy, h5py, sklearn; print('All imports OK')"` | No errors | ✅ All imports OK |
+| P3-5 | `python -c "from autoencoder_1D_models_torch import *"` | No errors (after fixes) | ✅ Passed |
+
+> **Note**: P3-5 verified via existing test suite (17/17 tests passed on current codebase).
 
 ---
 
@@ -595,4 +601,4 @@ pytest tests/test_full_pipeline.py -v -s
 
 ---
 
-> **Document Version**: v1.1 | **Last Updated**: 2026-05-18 | **Environment**: Python 3.12 + venv + CUDA PyTorch | **Maintainer**: Jiuxun Yin
+> **Document Version**: v1.2 | **Last Updated**: 2026-05-18 | **Environment**: Python 3.12 + venv + CUDA PyTorch 2.12.0+cu130 | **Maintainer**: Jiuxun Yin
