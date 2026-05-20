@@ -22,7 +22,7 @@ bottleneck_name = "LSTM"
 
 # %% Read the pre-processed datasets
 print("#" * 12 + " Loading data " + "#" * 12)
-model_datasets = '/kuafu/yinjx/WaveDecompNet_dataset/training_datasets/training_datasets_all_snr_40_unshuffled.hdf5'
+model_datasets = './training_datasets/training_datasets_all_snr_40_unshuffled.hdf5'
 with h5py.File(model_datasets, 'r') as f:
     X_train = f['X_train'][:]
     Y_train = f['Y_train'][:]

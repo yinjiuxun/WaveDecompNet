@@ -17,7 +17,7 @@ matplotlib.rcParams.update({'font.size': 10})
 # %% load dataset
 data_dir = './training_datasets'
 data_name = 'training_datasets_all_snr_40.hdf5'
-model_datasets = '/kuafu/yinjx/WaveDecompNet_dataset/training_datasets/training_datasets_all_snr_40_unshuffled.hdf5'
+model_datasets = './training_datasets/training_datasets_all_snr_40_unshuffled.hdf5'
 
 # %% load dataset
 with h5py.File(model_datasets, 'r') as f:
