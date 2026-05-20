@@ -28,8 +28,9 @@ def set_seed(seed: int = 42) -> None:
 
 class WaveformDataset(Dataset):
     def __init__(self, X_train, Y_train):
-        self.X_train = np.moveaxis(X_train, 1, -1)
-        self.Y_train = np.moveaxis(Y_train, 1, -1)
+        # Keep shape as (N, C, L) for Conv1d compatibility
+        self.X_train = X_train
+        self.Y_train = Y_train
 
     def __len__(self):
         return self.X_train.shape[0]
@@ -333,7 +334,7 @@ def training_loop_branches(train_dataloader, validate_dataloader, model, loss_fn
                 break
 
     # load the last checkpoint with the best model if apply early stopping
-    if patience is not None:
+    if patience is not None and os.path.exists('checkpoint.pt'):
         model.load_state_dict(torch.load('checkpoint.pt', weights_only=True))
 
     partial_loss = [avg_train_losses1, avg_valid_losses1, avg_train_losses2, avg_valid_losses2]

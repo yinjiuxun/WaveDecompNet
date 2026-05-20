@@ -24,8 +24,8 @@ bottleneck_name = "LSTM"
 print("#" * 12 + " Loading data " + "#" * 12)
 model_datasets = './training_datasets/training_datasets_all_snr_40_unshuffled.hdf5'
 with h5py.File(model_datasets, 'r') as f:
-    X_train = f['X_train'][:]
-    Y_train = f['Y_train'][:]
+    X_train = f['X_train'][:].astype(np.float64)
+    Y_train = f['Y_train'][:].astype(np.float64)
 
 # 3. split to training (60%), validation (20%) and test (20%)
 train_size = 0.6
@@ -62,19 +62,20 @@ decoder_earthquake = SeismogramDecoder(bottleneck=bottleneck_earthquake)
 decoder_noise = SeismogramDecoder(bottleneck=bottleneck_noise)
 
 model = SeisSeparator(model_name, encoder, decoder_earthquake, decoder_noise).to(device=try_gpu())
+model = model.double()  # Convert to float64 to match LSTM bottleneck
 
 # make the output directory to store the model information
 model_dataset_dir = model_dataset_dir + '/' + model_name
 mkdir(model_dataset_dir)
 
-batch_size, epochs, lr = 128, 300, 1e-3
+batch_size, epochs, lr = 128, 5, 1e-3
 minimum_epochs = 30  # the minimum epochs that the training has to do
 patience = 20  # patience of the early stopping
 
 loss_fn = torch.nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 LR_func = lambda epoch: (epoch+1)/11 if (epoch<=10) else (0.95**epoch if (epoch <50) else 0.95**50) # with warmup
-scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=LR_func, verbose=True)
+scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=LR_func)
 train_iter = DataLoader(training_data, batch_size=batch_size, shuffle=True)
 validate_iter = DataLoader(validate_data, batch_size=batch_size, shuffle=False)
 

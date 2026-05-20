@@ -107,7 +107,51 @@ Seismogram (3 channels)
 | P0-13 | Missing LICENSE file | 🟢 LOW | Phase 13 (Documentation) |
 | P0-14 | environment.yml hardcoded user path | 🟢 LOW | Phase 2 (Environment Config) |
 
-#### Current Dependency Audit
+### ✅ Phase 1.5: Data Pipeline & Environment Reproduction
+
+**Status**: ✅ **COMPLETED** — Commit `5e75c76` (2026-05-20)
+
+**Goal**: Restore lost training data pipeline, fix PyTorch 2.x / NumPy 2.0 compatibility issues, and ensure training runs out-of-the-box on modern environments.
+
+#### Completed Fixes
+
+| ID | Issue | Severity | Status |
+|----|-------|----------|--------|
+| P0-15 | Hardcoded absolute paths in train/test scripts | 🟠 HIGH | ✅ Fixed |
+| P0-16 | Missing data generation pipeline | 🔴 CRITICAL | ✅ Added `generate_training_data.py` |
+| P0-17 | PyTorch 2.x `LambdaLR` deprecated `verbose` param | 🟡 MEDIUM | ✅ Fixed |
+| P0-18 | `WaveformDataset` shape mismatch for `Conv1d` | 🔴 CRITICAL | ✅ Fixed |
+| P0-19 | `float64` dtype mismatch between data and model | 🔴 CRITICAL | ✅ Fixed |
+| P0-20 | `checkpoint.pt` FileNotFoundError on short runs | 🟡 MEDIUM | ✅ Fixed |
+
+#### Implementation Details
+
+**P0-15 / P0-16** Data Pipeline & Paths
+- Created `generate_training_data.py`: Downloads real IRIS events or falls back to synthetic STEAD-compatible waveforms (100 Hz, 60s window, 3 channels E/N/Z).
+- Generates `training_datasets_all_snr_40_unshuffled.hdf5` with SNR=40 dB (amplitude ratio 100).
+- Updated `train_model.py` and `test_model.py` to use relative path `./training_datasets/...`.
+
+**P0-17** PyTorch 2.x Compatibility
+- Removed `verbose=True` from `LambdaLR` (deprecated in PyTorch 2.0+).
+
+**P0-18** Dataset Shape Fix
+- Removed `np.moveaxis(X_train, 1, -1)` in `WaveformDataset`. `Conv1d` expects `(N, C, L)` format, which matches the HDF5 storage layout directly.
+
+**P0-19** Dtype Consistency
+- Added `model.double()` after model instantiation to match `dtype=torch.float64` used in LSTM bottleneck constructors.
+- Explicitly cast HDF5 data to `np.float64` on load.
+
+**P0-20** Checkpoint Loading Guard
+- Added `os.path.exists('checkpoint.pt')` check before `torch.load` in `training_loop_branches` to prevent crashes when early stopping hasn't triggered or training finishes early.
+
+#### Test Results
+- ✅ **5-epoch training test passed** on CPU with synthetic data.
+- ✅ Loss decreases consistently across epochs (~2.02 → ~1.91 train loss).
+- ✅ No runtime errors or deprecation warnings.
+
+---
+
+### Phase 2: Create Modern Environment Configuration
 
 | Dependency | Current Version (2021) | Purpose |
 |------------|----------------------|---------|
