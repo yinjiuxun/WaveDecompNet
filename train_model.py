@@ -22,7 +22,7 @@ bottleneck_name = "LSTM"
 
 # %% Read the pre-processed datasets
 print("#" * 12 + " Loading data " + "#" * 12)
-model_datasets = './training_datasets/training_datasets_all_snr_40_unshuffled.hdf5'
+model_datasets = './training_datasets/training_datasets_stead_snr40.hdf5'
 with h5py.File(model_datasets, 'r') as f:
     X_train = f['X_train'][:].astype(np.float64)
     Y_train = f['Y_train'][:].astype(np.float64)
@@ -68,7 +68,7 @@ model = model.double()  # Convert to float64 to match LSTM bottleneck
 model_dataset_dir = model_dataset_dir + '/' + model_name
 mkdir(model_dataset_dir)
 
-batch_size, epochs, lr = 128, 2, 1e-3
+batch_size, epochs, lr = 128, 5, 1e-3
 minimum_epochs = 2  # the minimum epochs that the training has to do
 patience = 20  # patience of the early stopping
 
