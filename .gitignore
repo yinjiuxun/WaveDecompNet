@@ -33,3 +33,15 @@ checkpoint.pt
 *.pth
 *.hdf5
 *.h5
+
+# Generated training data
+training_datasets/
+training_samples_*.png
+
+# Model checkpoints and training history
+*.pth
+*.hdf5
+*.h5
+Branch_Encoder_Decoder_LSTM/*.pth
+Branch_Encoder_Decoder_LSTM/*.hdf5
+Branch_Encoder_Decoder_LSTM/*.png

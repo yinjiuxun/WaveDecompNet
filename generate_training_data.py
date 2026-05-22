@@ -20,14 +20,14 @@ import pandas as pd
 from pathlib import Path
 
 # --- Configuration ---
-STEAD_HDF5 = "/workspace/data/STEAD/merged.hdf5"
-STEAD_CSV = "/workspace/data/STEAD/merged.csv"
+STEAD_HDF5 = "../../data/STEAD/merged.hdf5"
+STEAD_CSV = "../../data/STEAD/merged.csv"
 OUTPUT_DIR = "training_datasets"
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, "training_datasets_stead_snr40.hdf5")
 N_EVENTS = 500              # Number of training samples to generate
 SAMPLE_RATE = 100           # Hz (STEAD standard)
 WINDOW_LENGTH = 60          # Seconds (STEAD standard)
-SNR_RATIO = 100             # Amplitude ratio for SNR=40dB (10^(40/20))
+SNR_RATIO = 5             # Amplitude ratio for SNR=40dB (10^(40/20))
 MAX_DISTANCE_KM = 100       # Maximum source distance in km
 RANDOM_SEED = 42            # For reproducibility
 

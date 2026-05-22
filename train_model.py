@@ -68,7 +68,7 @@ model = model.double()  # Convert to float64 to match LSTM bottleneck
 model_dataset_dir = model_dataset_dir + '/' + model_name
 mkdir(model_dataset_dir)
 
-batch_size, epochs, lr = 128, 5, 1e-3
+batch_size, epochs, lr = 128, 50, 1e-3
 minimum_epochs = 2  # the minimum epochs that the training has to do
 patience = 20  # patience of the early stopping
 
